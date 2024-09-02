@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3 uid="uid://dvigc0q3tmasb"]
+
+[ext_resource type="Texture2D" uid="uid://ba7f16i7l8tes" path="res://sprites/foxy.png" id="1_hvunf"]
+[ext_resource type="Script" path="res://scripts/foxy.gd" id="1_l0dk2"]
+[ext_resource type="AudioStream" uid="uid://b438wlkyc5ru8" path="res://sounds/metal_pipe.mp3" id="3_0xc4d"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ndr0n"]
+height = 3.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qxpgx"]
+size = Vector3(2, 1, 2)
+
+[node name="Foxy" type="CharacterBody3D" groups=["kill"]]
+script = ExtResource("1_l0dk2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_ndr0n")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, 0)
+billboard = 2
+texture = ExtResource("1_hvunf")
+
+[node name="WallTouchArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallTouchArea" groups=["killable"]]
+shape = SubResource("BoxShape3D_qxpgx")
+
+[node name="MetalPipeSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_0xc4d")
+
+[connection signal="body_entered" from="WallTouchArea" to="." method="touch_wall"]

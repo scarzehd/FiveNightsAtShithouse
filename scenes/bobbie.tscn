@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://ml7lnxnyik8h"]
+
+[ext_resource type="Texture2D" uid="uid://c7u71o1mykd7g" path="res://sprites/bobbie.png" id="1_dbxpo"]
+[ext_resource type="Script" path="res://scripts/bobbie.gd" id="1_jdgd1"]
+[ext_resource type="AudioStream" uid="uid://4lnqi7ecw04f" path="res://sounds/bad_to_the_bone.mp3" id="3_rjwva"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_sikje"]
+radius = 0.75
+
+[node name="Bobbie" type="CharacterBody3D" groups=["kill", "killable"]]
+script = ExtResource("1_jdgd1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." groups=["kill", "killable"]]
+shape = SubResource("SphereShape3D_sikje")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+gi_mode = 0
+billboard = 2
+texture = ExtResource("1_dbxpo")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_height_offset = -0.5
+navigation_layers = 3
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_rjwva")
+
+[node name="BadToTheBoneTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="BadToTheBoneTimer" to="." method="update_position"]

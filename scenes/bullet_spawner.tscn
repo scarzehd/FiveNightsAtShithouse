@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://brgootew03tie"]
+
+[ext_resource type="Script" path="res://scripts/bullet_spawner.gd" id="1_ey8u3"]
+[ext_resource type="PackedScene" uid="uid://ig6la4gwtp8r" path="res://scenes/bullet.tscn" id="2_0b1ob"]
+
+[node name="BulletSpawner" type="Node3D"]
+script = ExtResource("1_ey8u3")
+bullet_scene = ExtResource("2_0b1ob")
+nav_layers = 3
+
+[node name="SpawnTimer" type="Timer" parent="."]
+wait_time = 5.0
+autostart = true
+
+[connection signal="timeout" from="SpawnTimer" to="." method="spawn_bullet"]

@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0tjv6q0ceh8q"]
+
+[ext_resource type="PackedScene" uid="uid://p68wku0hxguf" path="res://map.blend" id="1_tsptr"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gye6y"]
+size = Vector3(13.77, 0.37, 2)
+
+[node name="map" instance=ExtResource("1_tsptr")]
+
+[node name="Halls" parent="." index="0" groups=["main_nav_region"]]
+
+[node name="StaticBody3D" parent="Halls" index="0" groups=["hall"]]
+
+[node name="Vents" parent="." index="1" groups=["vent_nav_region"]]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." index="2" groups=["main_nav_region"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.296643, -51.3181)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0"]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 0, -0.34364, 0.162766)
+shape = SubResource("BoxShape3D_gye6y")

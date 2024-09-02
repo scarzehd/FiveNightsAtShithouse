@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://d2ogmxbyyt5mk"]
+
+[ext_resource type="Texture2D" uid="uid://mig2x6yb2w12" path="res://map_vent.png" id="1_kkegu"]
+
+[resource]
+resource_name = "Vent"
+cull_mode = 2
+albedo_texture = ExtResource("1_kkegu")
+metallic = 0.6
+roughness = 0.22
+uv1_scale = Vector3(20, 20, 20)

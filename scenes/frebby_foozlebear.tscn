@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://btwlwfy7v2eat"]
+
+[ext_resource type="Texture2D" uid="uid://bkmksaoen84on" path="res://sprites/freddy.png" id="1_f1sgk"]
+[ext_resource type="Script" path="res://scripts/frebby_foozlebear.gd" id="1_v3jbt"]
+[ext_resource type="AudioStream" uid="uid://ce0opo8dxygvd" path="res://sounds/vine_boom.mp3" id="3_yn6g8"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_m2uqg"]
+height = 3.0
+
+[node name="FrebbyFoozlebear" type="CharacterBody3D" groups=["kill", "killable"]]
+script = ExtResource("1_v3jbt")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_m2uqg")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
+gi_mode = 0
+billboard = 2
+texture = ExtResource("1_f1sgk")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_height_offset = -1.5
+
+[node name="VineBoomTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_yn6g8")
+
+[connection signal="timeout" from="VineBoomTimer" to="." method="update_position"]

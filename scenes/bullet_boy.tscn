@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://b0cnkhjq6qrqj"]
+
+[ext_resource type="Texture2D" uid="uid://ddqm1ufnp2gw0" path="res://sprites/bullet_boy.png" id="1_1od63"]
+[ext_resource type="Script" path="res://scripts/bullet_boy.gd" id="1_jibcv"]
+[ext_resource type="AudioStream" uid="uid://bs30e2dd1qb7r" path="res://sounds/chuckle.mp3" id="3_3e63b"]
+[ext_resource type="AudioStream" uid="uid://t1y3bn885qwj" path="res://sounds/hello.mp3" id="4_rnj76"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_5d16n"]
+height = 4.0
+radius = 7.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_lhne6"]
+radius = 1.0
+
+[node name="BulletBoy" type="CharacterBody3D"]
+script = ExtResource("1_jibcv")
+
+[node name="BulletCollectionArea" type="Area3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+collision_mask = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BulletCollectionArea"]
+shape = SubResource("CylinderShape3D_5d16n")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+billboard = 2
+texture = ExtResource("1_1od63")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_lhne6")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="." groups=["killable"]]
+navigation_layers = 3
+
+[node name="ChuckleAudio" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_3e63b")
+
+[node name="HelloAudio" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4_rnj76")
+
+[node name="HelloTimer" type="Timer" parent="."]
+
+[connection signal="body_entered" from="BulletCollectionArea" to="." method="collect_bullet"]
+[connection signal="timeout" from="HelloTimer" to="." method="play_audio"]

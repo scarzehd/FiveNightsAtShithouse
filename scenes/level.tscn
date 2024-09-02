@@ -1,0 +1,176 @@
+[gd_scene load_steps=21 format=3 uid="uid://b31cqojhy34in"]
+
+[ext_resource type="PackedScene" uid="uid://brgootew03tie" path="res://scenes/bullet_spawner.tscn" id="1_o1d41"]
+[ext_resource type="PackedScene" uid="uid://spvfo0k2fnj8" path="res://scenes/clams.tscn" id="2_gx22t"]
+[ext_resource type="PackedScene" uid="uid://c55yhj42fxduq" path="res://scenes/vent.tscn" id="2_ikf65"]
+[ext_resource type="PackedScene" uid="uid://btwlwfy7v2eat" path="res://scenes/frebby_foozlebear.tscn" id="3_hmhs8"]
+[ext_resource type="PackedScene" uid="uid://ml7lnxnyik8h" path="res://scenes/bobbie.tscn" id="4_1yfhh"]
+[ext_resource type="PackedScene" uid="uid://dvigc0q3tmasb" path="res://scenes/foxy.tscn" id="5_ujuei"]
+[ext_resource type="PackedScene" uid="uid://d0tjv6q0ceh8q" path="res://scenes/map.tscn" id="5_x0ksw"]
+[ext_resource type="PackedScene" uid="uid://b0cnkhjq6qrqj" path="res://scenes/bullet_boy.tscn" id="6_rxnqy"]
+[ext_resource type="PackedScene" uid="uid://bu310pjagygfn" path="res://scenes/hall.tscn" id="8_l23wu"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xaoe2"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_ihkxe"]
+sky_material = SubResource("ProceduralSkyMaterial_xaoe2")
+
+[sub_resource type="Environment" id="Environment_cf2eq"]
+background_mode = 1
+sky = SubResource("Sky_ihkxe")
+ambient_light_source = 1
+reflected_light_source = 1
+tonemap_mode = 3
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_use_occlusion = true
+glow_enabled = true
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_mvhb5"]
+vertices = PackedVector3Array(6.25, 0.5, -51.75, 6.25, 0.75, -57.25, -6.5, 0.75, -57.25, -6.5, 0.5, -51.75, -7.25, 0.5, -51.5, -7, 0.5, -33.75, 6.75, 0.5, -33.75, 7, 0.5, -51.5, -21.75, 0.5, -41.25, -20.5, 0.5, -41.5, -20.5, 0.5, -45, -21.75, 0.5, -45.25, -35.25, 0.5, -39.25, -21.75, 0.5, -53, -35.25, 0.5, -53, -21.75, 0.5, -39.25, 20.25, 0.5, -45, 20.25, 0.5, -41.5, 21.5, 0.5, -41.25, 21.5, 0.5, -45.25, 35.5, 0.5, -33.5, 35.5, 0.5, -53, 21.5, 0.5, -33.5, 21.5, 0.5, -53, -19.5, 0.5, -41.25, -19.5, 0.5, -45.25, -12.5, 0.5, -33.5, -7.75, 0.5, -33.5, -19.5, 0.5, -51.5, -19.5, 0.5, -33.75, 19.25, 0.5, -41.25, 19.25, 0.5, -45.25, 12.5, 0.5, -33.75, 7.5, 0.5, -33.5, 7.5, 0.5, -31.75, 12.25, 0.5, -31.75, 19.25, 0.5, -33.75, 19.25, 0.5, -51.5, -35.25, 0.5, -32.5, -29.75, 0.5, -32.25, -21.75, 0.5, -32.5, -6.75, 0.5, -1.25, -6.5, 0.5, -2.5, -7.75, 0.5, -2.75, -12.5, 0.5, -1.25, -13.75, 0.5, -17.5, -13.75, 0.5, -15, -12.5, 0.5, -14.75, -12.5, 0.5, -17.75, 7.5, 0.5, -2.75, 6.25, 0.5, -2.5, 6.5, 0.5, -1.25, 12.25, 0.5, -1.25, -14.75, 0.5, -14.75, -20.5, 0.5, -17.5, -20.5, 0.5, -11, -14.75, 0.5, -11, -5.5, 0.5, -2.75, -5.5, 0.5, -1, 5.25, 0.5, -1, 5.25, 0.5, -2.75, 5.25, 0.5, -5.5, -5.5, 0.5, -5.5, -5.5, 0.5, 13.25, 5.25, 0.5, 13.25)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1), PackedInt32Array(0, 7, 3), PackedInt32Array(3, 7, 4), PackedInt32Array(4, 7, 6), PackedInt32Array(4, 6, 5), PackedInt32Array(9, 8, 10), PackedInt32Array(10, 8, 11), PackedInt32Array(11, 8, 12), PackedInt32Array(13, 11, 14), PackedInt32Array(14, 11, 12), PackedInt32Array(8, 15, 12), PackedInt32Array(16, 19, 17), PackedInt32Array(17, 19, 18), PackedInt32Array(19, 21, 18), PackedInt32Array(18, 21, 20), PackedInt32Array(20, 22, 18), PackedInt32Array(19, 23, 21), PackedInt32Array(24, 9, 10), PackedInt32Array(10, 25, 24), PackedInt32Array(24, 25, 26), PackedInt32Array(27, 26, 5), PackedInt32Array(5, 26, 25), PackedInt32Array(5, 25, 28), PackedInt32Array(5, 28, 4), PackedInt32Array(26, 29, 24), PackedInt32Array(16, 17, 30), PackedInt32Array(16, 30, 31), PackedInt32Array(31, 30, 32), PackedInt32Array(34, 33, 35), PackedInt32Array(35, 33, 32), PackedInt32Array(30, 36, 32), PackedInt32Array(33, 6, 32), PackedInt32Array(32, 6, 31), PackedInt32Array(31, 6, 37), PackedInt32Array(37, 6, 7), PackedInt32Array(38, 12, 39), PackedInt32Array(39, 12, 40), PackedInt32Array(40, 12, 15), PackedInt32Array(42, 41, 43), PackedInt32Array(43, 41, 44), PackedInt32Array(45, 48, 46), PackedInt32Array(46, 48, 47), PackedInt32Array(26, 27, 48), PackedInt32Array(48, 27, 43), PackedInt32Array(43, 47, 48), PackedInt32Array(43, 44, 47), PackedInt32Array(50, 49, 51), PackedInt32Array(51, 49, 52), PackedInt32Array(34, 35, 49), PackedInt32Array(49, 35, 52), PackedInt32Array(46, 53, 45), PackedInt32Array(45, 53, 54), PackedInt32Array(56, 55, 53), PackedInt32Array(53, 55, 54), PackedInt32Array(42, 57, 41), PackedInt32Array(41, 57, 58), PackedInt32Array(58, 57, 60), PackedInt32Array(58, 60, 59), PackedInt32Array(57, 62, 60), PackedInt32Array(60, 62, 61), PackedInt32Array(50, 51, 60), PackedInt32Array(60, 51, 59), PackedInt32Array(59, 64, 58), PackedInt32Array(58, 64, 63)]
+geometry_source_geometry_mode = 1
+geometry_source_group_name = &"main_nav_region"
+agent_max_climb = 1.0
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_dfowf"]
+vertices = PackedVector3Array(27.25, 0.5, 6.75, 6.75, 0.5, 6.75, 6.75, 0.5, 8, 29.25, 0.5, 8, 29.25, 0.5, -32, 27.75, 0.5, -32, 27.75, 0.5, 6.25, -18.75, 0.5, -23.25, -18.75, 0.5, -18.75, -17.5, 0.5, -18.75, -17.5, 0.5, -25, -27.5, 0.5, -25, -28, 0.5, -25.5, -29, 0.5, -23.75, -19.25, 0.5, -23.75, -28, 0.5, -31.25, -29, 0.5, -31.25)
+polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(5, 4, 6), PackedInt32Array(6, 4, 3), PackedInt32Array(3, 0, 6), PackedInt32Array(8, 7, 9), PackedInt32Array(9, 7, 10), PackedInt32Array(13, 12, 11), PackedInt32Array(10, 7, 14), PackedInt32Array(15, 12, 16), PackedInt32Array(16, 12, 13), PackedInt32Array(13, 11, 14), PackedInt32Array(14, 11, 10)]
+geometry_source_geometry_mode = 1
+geometry_source_group_name = &"vent_nav_region"
+agent_radius = 0.75
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kl4b0"]
+size = Vector3(24.6632, 3.54932, 5.45166)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_77lgq"]
+size = Vector3(4.55914, 3.95264, 43.9361)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0ltua"]
+size = Vector3(15.372, 4.81812, 4.30316)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xst8y"]
+size = Vector3(5.11154, 4.50659, 9.50739)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fv8la"]
+size = Vector3(3.57654, 3.91187, 10.4572)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_483ym"]
+size = Vector3(7, 8, 32.4081)
+
+[node name="Level" type="Node3D"]
+
+[node name="BulletSpawner" parent="." instance=ExtResource("1_o1d41")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_cf2eq")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+light_energy = 0.0
+shadow_enabled = true
+
+[node name="Clams" parent="." instance=ExtResource("2_gx22t")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, 0)
+
+[node name="Bobbie" parent="." instance=ExtResource("4_1yfhh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 0)
+
+[node name="FrebbyFoozlebear" parent="." instance=ExtResource("3_hmhs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -55.2108)
+
+[node name="Foxy" parent="." instance=ExtResource("5_ujuei")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0156403, 19.9426, -23.7954)
+chance = 1
+
+[node name="BulletBoy" parent="." groups=["killable"] instance=ExtResource("6_rxnqy")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, -12.9643)
+chance = 2
+
+[node name="map" parent="." instance=ExtResource("5_x0ksw")]
+
+[node name="MainRegion" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_mvhb5")
+
+[node name="VentRegion" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_dfowf")
+navigation_layers = 2
+
+[node name="RightVent" parent="." instance=ExtResource("2_ikf65")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.9544, 1.31866, 7.26997)
+time_allowed = 8.0
+reset_time = 5.5
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RightVent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.2137, -0.124203, 0.408447)
+shape = SubResource("BoxShape3D_kl4b0")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="RightVent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.694183, 0.0774572, -18.1505)
+shape = SubResource("BoxShape3D_77lgq")
+
+[node name="LeftVent" parent="." instance=ExtResource("2_ikf65")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.621, 1.63572, -24.1017)
+time_allowed = 4.0
+reset_time = 3.5
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LeftVent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.355927, 0.587524, -0.385212)
+shape = SubResource("BoxShape3D_0ltua")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="LeftVent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.85286, 0.0245361, 1.96811)
+shape = SubResource("BoxShape3D_xst8y")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="LeftVent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.89899, 0.551392, -3.16437)
+shape = SubResource("BoxShape3D_fv8la")
+
+[node name="RightHall" parent="." instance=ExtResource("8_l23wu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 5, -20)
+pos_1_direction = Vector3(0, 0, 1)
+pos_2_direction = Vector3(0, 0, -1)
+max_variance = Vector3(2, 0, 0)
+
+[node name="Pos1" parent="RightHall" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5, -11.5)
+
+[node name="Pos2" parent="RightHall" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5, 17.5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RightHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.60346)
+shape = SubResource("BoxShape3D_483ym")
+
+[node name="LeftHall" parent="." instance=ExtResource("8_l23wu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 5, -20)
+pos_1_direction = Vector3(0, 0, 1)
+pos_2_direction = Vector3(0, 0, -1)
+max_variance = Vector3(2, 0, 0)
+
+[node name="Pos1" parent="LeftHall" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5, -11.5)
+
+[node name="Pos2" parent="LeftHall" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5, 17.5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LeftHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.60346)
+shape = SubResource("BoxShape3D_483ym")
+
+[connection signal="reset" from="RightVent" to="Bobbie" method="deactivate"]
+[connection signal="timeout" from="RightVent" to="Bobbie" method="_on_right_vent_timeout"]
+[connection signal="reset" from="LeftVent" to="Bobbie" method="deactivate"]
+[connection signal="timeout" from="LeftVent" to="Bobbie" method="_on_vent_timeout"]
+[connection signal="spawn_foxy" from="RightHall" to="Foxy" method="activate"]
+[connection signal="spawn_foxy" from="LeftHall" to="Foxy" method="activate"]
+
+[editable path="RightHall"]
+[editable path="LeftHall"]
