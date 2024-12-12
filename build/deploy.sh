@@ -26,12 +26,12 @@ mkdir web/${VERSION}
 
 PROJECT_PATH=$( pwd )/../
 
-$GODOT --headless --path $PROJECT_PATH --export-release "Windows" build/windows/fnas-windows-${VERSION}.exe
-$GODOT --headless --path $PROJECT_PATH --export-release "Linux" build/linux/fnas-linux-${VERSION}.x86_64
-$GODOT --headless --path $PROJECT_PATH --export-release "macOS" build/macos/fnas-macos-${VERSION}.zip
+$GODOT --headless --path $PROJECT_PATH --export-release "Windows" build/windows/five-nights-at-shithouse-windows.exe
+$GODOT --headless --path $PROJECT_PATH --export-release "Linux" build/linux/five-nights-at-shithouse-linux.x86_64
+$GODOT --headless --path $PROJECT_PATH --export-release "macOS" build/macos/five-nights-at-shithouse-macos.zip
 $GODOT --headless --path $PROJECT_PATH --export-release "Web" build/web/${VERSION}/index.html
 
-butler push windows/ scarzehd/five-nights-at-shithouse:windows --userversion $VERSION
+butler push windows/fnas-windows-${VERSION}.zip scarzehd/five-nights-at-shithouse:windows --userversion $VERSION
 butler push linux/ scarzehd/five-nights-at-shithouse:linux --userversion $VERSION
 butler push web/${VERSION}/ scarzehd/five-nights-at-shithouse:web --userversion $VERSION
-butler push macos/fnas-macos-${VERSION}.zip scarzehd/five-nights-at-shithouse:macos --userversion $VERSION
+butler push macos/five-nights-at-shithouse-macos.zip scarzehd/five-nights-at-shithouse:macos --userversion $VERSION
