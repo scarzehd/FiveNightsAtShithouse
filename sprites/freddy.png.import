@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkmksaoen84on"
 path.s3tc="res://.godot/imported/freddy.png-b18c63db0f16edc639b73e956c6ca62b.s3tc.ctex"
+path.etc2="res://.godot/imported/freddy.png-b18c63db0f16edc639b73e956c6ca62b.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://sprites/freddy.png"
-dest_files=["res://.godot/imported/freddy.png-b18c63db0f16edc639b73e956c6ca62b.s3tc.ctex"]
+dest_files=["res://.godot/imported/freddy.png-b18c63db0f16edc639b73e956c6ca62b.s3tc.ctex", "res://.godot/imported/freddy.png-b18c63db0f16edc639b73e956c6ca62b.etc2.ctex"]
 
 [params]
 

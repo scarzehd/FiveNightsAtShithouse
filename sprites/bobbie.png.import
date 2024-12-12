@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7u71o1mykd7g"
 path.s3tc="res://.godot/imported/bobbie.png-842e5718443fcf48407d88baac14c689.s3tc.ctex"
+path.etc2="res://.godot/imported/bobbie.png-842e5718443fcf48407d88baac14c689.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://sprites/bobbie.png"
-dest_files=["res://.godot/imported/bobbie.png-842e5718443fcf48407d88baac14c689.s3tc.ctex"]
+dest_files=["res://.godot/imported/bobbie.png-842e5718443fcf48407d88baac14c689.s3tc.ctex", "res://.godot/imported/bobbie.png-842e5718443fcf48407d88baac14c689.etc2.ctex"]
 
 [params]
 
