@@ -31,7 +31,7 @@ $GODOT --headless --path $PROJECT_PATH --export-release "Linux" build/linux/five
 $GODOT --headless --path $PROJECT_PATH --export-release "macOS" build/macos/five-nights-at-shithouse-macos.zip
 $GODOT --headless --path $PROJECT_PATH --export-release "Web" build/web/${VERSION}/index.html
 
-butler push windows/fnas-windows-${VERSION}.zip scarzehd/five-nights-at-shithouse:windows --userversion $VERSION
+butler push windows/ scarzehd/five-nights-at-shithouse:windows --userversion $VERSION
 butler push linux/ scarzehd/five-nights-at-shithouse:linux --userversion $VERSION
 butler push web/${VERSION}/ scarzehd/five-nights-at-shithouse:web --userversion $VERSION
 butler push macos/five-nights-at-shithouse-macos.zip scarzehd/five-nights-at-shithouse:macos --userversion $VERSION
