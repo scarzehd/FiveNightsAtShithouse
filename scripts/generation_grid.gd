@@ -51,7 +51,9 @@ func _ready():
 	add_meshes()
 
 func generate():
-	
+	gen_rooms()
+
+func gen_rooms():
 	var chunk_bounds := get_chunk_bounds()
 	
 	var rooms:Array[Rect2i] = []
@@ -91,7 +93,7 @@ func add_meshes():
 	for position in cells:
 		var cell = cells[position]
 		if cell.type == CellType.ROOM:
-			set_cell_item(Vector3i(position.x, 0, position.y), 0)
+			set_cell_item(Vector3i(position.x, 0, position.y), 1)
 
 #region Utilities
 
