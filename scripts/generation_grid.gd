@@ -123,10 +123,12 @@ func shrink_to_fit(rect:Rect2i, encloser:Rect2i) -> Rect2i:
 
 
 func random_point_in_chunk(chunk_center:Vector2i) -> Vector2i:
+	return random_point_in_bounds(get_chunk_bounds(chunk_center))
+
+func random_point_in_bounds(bounds:Rect2i) -> Vector2i:
 	var point = Vector2i()
-	var chunk_bounds := get_chunk_bounds(chunk_center)
-	point.x = randi_range(chunk_bounds.position.x, chunk_bounds.end.x)
-	point.y = randi_range(chunk_bounds.position.y, chunk_bounds.end.y)
+	point.x = randi_range(bounds.position.x, bounds.end.x)
+	point.y = randi_range(bounds.position.y, bounds.end.y)
 	
 	return point
 
