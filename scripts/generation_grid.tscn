@@ -1,24 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://0qhheclwfsjo"]
+[gd_scene load_steps=4 format=3 uid="uid://0qhheclwfsjo"]
 
 [ext_resource type="MeshLibrary" uid="uid://df0hnlacu3067" path="res://mesh_library.tres" id="1_j82p5"]
 [ext_resource type="Script" path="res://scripts/generation_grid.gd" id="1_k06b2"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_43x04"]
-sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-
-[sub_resource type="Sky" id="Sky_eg6ks"]
-sky_material = SubResource("ProceduralSkyMaterial_43x04")
-
 [sub_resource type="Environment" id="Environment_oc1e1"]
-background_mode = 2
-sky = SubResource("Sky_eg6ks")
+background_mode = 1
+background_color = Color(0.325441, 0.325441, 0.325441, 1)
 tonemap_mode = 2
 sdfgi_enabled = true
 glow_enabled = true
 
 [node name="Generator" type="GridMap"]
 mesh_library = ExtResource("1_j82p5")
+cell_size = Vector3(1, 1, 1)
 script = ExtResource("1_k06b2")
 metadata/_editor_floor_ = Vector3(0, 20, 0)
 
@@ -26,9 +20,11 @@ metadata/_editor_floor_ = Vector3(0, 20, 0)
 environment = SubResource("Environment_oc1e1")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
-light_energy = 0.0
+transform = Transform3D(0.999999, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 shadow_enabled = true
+sky_mode = 1
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 75, 0)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 30, 0)
+projection = 1
+size = 200.0
