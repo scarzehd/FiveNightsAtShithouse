@@ -12,7 +12,7 @@ glow_enabled = true
 
 [node name="Generator" type="GridMap"]
 mesh_library = ExtResource("1_j82p5")
-cell_size = Vector3(1, 1, 1)
+cell_size = Vector3(1.2, 1.2, 1.2)
 script = ExtResource("1_k06b2")
 metadata/_editor_floor_ = Vector3(0, 20, 0)
 

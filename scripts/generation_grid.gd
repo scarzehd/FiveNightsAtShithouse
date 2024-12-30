@@ -169,19 +169,7 @@ func gen_halls(chunk_center:Vector2i):
 	set_cell_type_from_rects(hall_rects, CellType.HALL)
 
 func create_hall_rect(start_cell_pos:Vector2i, end_cell_pos:Vector2i) -> Rect2i:
-	#var hall_axis = -1
-	#
-	#if start_cell_pos.x == end_cell_pos.x:
-		#hall_axis = 1 # Loop over y
-	#elif start_cell_pos.y == end_cell_pos.y:
-		#hall_axis = 0 # Loop over x
-	#else:
-		#push_error("Hall start " + str(start_cell_pos) + " and end "+ str(end_cell_pos) +" do not make a straight line.")
-		#return Rect2i()
-	
 	var hall_width_centered = (HALL_WIDTH - 1) / 2
-	
-	#print(hall_width_centered)
 	
 	var hall_rect = Rect2i()
 	
@@ -193,28 +181,13 @@ func create_hall_rect(start_cell_pos:Vector2i, end_cell_pos:Vector2i) -> Rect2i:
 	if start_cell_pos.x == end_cell_pos.x:
 		hall_rect = hall_rect.grow_side(SIDE_LEFT, hall_width_centered)
 		hall_rect = hall_rect.grow_side(SIDE_RIGHT, hall_width_centered + 1)
-		print("h")
+		hall_rect = hall_rect.grow_side(SIDE_TOP, -1) # This makes sure the generated hall doesn't overlap with the room it's attached to
 	elif start_cell_pos.y == end_cell_pos.y:
 		hall_rect = hall_rect.grow_side(SIDE_TOP, hall_width_centered)
 		hall_rect = hall_rect.grow_side(SIDE_BOTTOM, hall_width_centered + 1)
-		print("v")
-	
-	print(hall_rect)
+		hall_rect = hall_rect.grow_side(SIDE_LEFT, -1) # See above comment
 	
 	return hall_rect
-	
-	#for i in range(start_cell_pos[hall_axis], end_cell_pos[hall_axis] + 1):
-		#for j in range(-hall_width_centered, hall_width_centered + 1):
-			#var cell_pos = Vector2i.ZERO
-			#if hall_axis == 0:
-				#cell_pos = Vector2i(i, start_cell_pos.y + j)
-			#if hall_axis == 1:
-				#cell_pos = Vector2i(start_cell_pos.x + j, i)
-			#
-			## This is a bandaid fix for halls generating over rooms.
-			## TODO fix this for real
-			#if cells[cell_pos].type == CellType.EMPTY:
-				#cells[cell_pos].type = CellType.HALL
 
 func get_hall_candidate(chunk_center:Vector2i) -> Vector2i:
 	var cell_position := random_point_in_chunk(chunk_center)
@@ -236,9 +209,7 @@ func set_cell_type_from_rects(rects:Array[Rect2i], cell_type:CellType):
 	for rect in rects:
 		for x in range(rect.position.x, rect.end.x):
 			for y in range(rect.position.y, rect.end.y):
-				var cell:CellData = cells[Vector2i(x, y)]
-				if cell.type == CellType.EMPTY:
-					cell.type = cell_type
+				cells[Vector2i(x, y)].type = cell_type
 
 func shrink_to_fit(rect:Rect2i, encloser:Rect2i) -> Rect2i:
 	var new_rect = Rect2i(rect)
