@@ -1,4 +1,4 @@
-extends GridMap
+extends Node3D
 class_name GenerationGrid
 
 #region Internal Classes
@@ -47,6 +47,16 @@ const HALL_PADDING = 4
 
 #endregion
 
+#region Debug
+
+const ROOM_DEBUG_MESH = preload("res://scenes/debug/room_debug_mesh.tscn")
+const HALL_DEBUG_MESH = preload("res://scenes/debug/hall_debug_mesh.tscn")
+const VENT_DEBUG_MESH = preload("res://scenes/debug/vent_debug_mesh.tscn")
+
+const DEBUG_GRID_CELL_SIZE = 1
+
+#endregion
+
 func _ready():
 	initialize()
 
@@ -60,16 +70,25 @@ func initialize():
 			var chunk_center = Vector2i(chunk_x, chunk_y) * CHUNK_SIZE
 			init_chunk(chunk_center)
 	
+	var previous_chunk_center = null
+	
 	# Generate rooms first, then halls.
 	for chunk_x in range(-border_chunks, border_chunks + 1):
 		for chunk_y in range(-border_chunks, border_chunks + 1):
 			var chunk_center = Vector2i(chunk_x, chunk_y) * CHUNK_SIZE
-			gen_rooms(chunk_center)
+			while true:
+				gen_rooms(chunk_center)
+				gen_halls(chunk_center)
+				if previous_chunk_center != null and verify_chunk(chunk_center, previous_chunk_center):
+					init_chunk(chunk_center)
+					continue
+				previous_chunk_center = chunk_center
+				break
 
 	for chunk_x in range(-border_chunks, border_chunks + 1):
 		for chunk_y in range(-border_chunks, border_chunks + 1):
 			var chunk_center = Vector2i(chunk_x, chunk_y) * CHUNK_SIZE
-			gen_halls(chunk_center)
+			
 	
 	add_meshes()
 
@@ -81,9 +100,14 @@ func add_meshes():
 	for cell_position in cells:
 		var cell = cells[cell_position]
 		if cell.type == CellType.ROOM:
-			set_cell_item(Vector3i(cell_position.x, 0, cell_position.y), 1)
+			add_mesh(cell_position, ROOM_DEBUG_MESH)
 		if cell.type == CellType.HALL:
-			set_cell_item(Vector3i(cell_position.x, 0, cell_position.y), 0)
+			add_mesh(cell_position, HALL_DEBUG_MESH)
+
+func add_mesh(position:Vector2i, scene:PackedScene):
+	var mesh:MeshInstance3D = scene.instantiate()
+	mesh.position = Vector3(position.x * DEBUG_GRID_CELL_SIZE, 0, position.y * DEBUG_GRID_CELL_SIZE)
+	add_child(mesh)
 
 #region Room Generation
 
@@ -156,7 +180,6 @@ func gen_halls(chunk_center:Vector2i):
 		
 		for hall in hall_rects:
 			var expanded = Rect2i(hall).grow(HALL_PADDING)
-			print(expanded)
 			if expanded.intersects(hall_rect):
 				conflicting = true
 		
@@ -274,5 +297,35 @@ func get_cell_normal(cell_position:Vector2i) -> Vector2i:
 		#print(normal)
 	
 	return normal
+
+func verify_chunk(chunk_center:Vector2i, reference_chunk_center:Vector2i) -> bool:
+	var chunk_bounds := get_chunk_bounds(chunk_center)
+	var reference_direction = (chunk_center - reference_chunk_center).sign()
+	
+	var x = []
+	var y = []
+	
+	match reference_direction:
+		Vector2i.RIGHT:
+			x = [chunk_bounds.end.x]
+			y = range(chunk_bounds.position.y, chunk_bounds.end.y)
+		Vector2i.LEFT:
+			x = [chunk_bounds.position.x]
+			y = range(chunk_bounds.position.y, chunk_bounds.end.y)
+		Vector2i.UP:
+			x = range(chunk_bounds.position.x, chunk_bounds.end.x)
+			y = [chunk_bounds.position.y]
+		Vector2i.DOWN:
+			x = range(chunk_bounds.position.x, chunk_bounds.end.x)
+			y = [chunk_bounds.end.y]
+	
+	
+	for x_pos in x:
+		for y_pos in y:
+			print(Vector2i(x_pos, y_pos))
+			if cells[Vector2i(x_pos, y_pos)].type != CellType.EMPTY:
+				return true
+	
+	return false
 
 #endregion

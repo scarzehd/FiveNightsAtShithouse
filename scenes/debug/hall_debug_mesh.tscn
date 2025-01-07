@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://dgx03s85ul04u"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_0msva"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6hfud"]
+albedo_color = Color(0, 1, 0, 1)
+
+[node name="HallDebugMesh" type="MeshInstance3D"]
+mesh = SubResource("BoxMesh_0msva")
+surface_material_override/0 = SubResource("StandardMaterial3D_6hfud")

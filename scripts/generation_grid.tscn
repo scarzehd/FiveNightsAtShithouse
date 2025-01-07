@@ -1,6 +1,5 @@
-[gd_scene load_steps=4 format=3 uid="uid://0qhheclwfsjo"]
+[gd_scene load_steps=3 format=3 uid="uid://0qhheclwfsjo"]
 
-[ext_resource type="MeshLibrary" uid="uid://df0hnlacu3067" path="res://mesh_library.tres" id="1_j82p5"]
 [ext_resource type="Script" path="res://scripts/generation_grid.gd" id="1_k06b2"]
 
 [sub_resource type="Environment" id="Environment_oc1e1"]
@@ -10,17 +9,14 @@ tonemap_mode = 2
 sdfgi_enabled = true
 glow_enabled = true
 
-[node name="Generator" type="GridMap"]
-mesh_library = ExtResource("1_j82p5")
-cell_size = Vector3(1.2, 1.2, 1.2)
+[node name="Generator" type="Node3D"]
 script = ExtResource("1_k06b2")
-metadata/_editor_floor_ = Vector3(0, 20, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_oc1e1")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.999999, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 shadow_enabled = true
 sky_mode = 1
 
