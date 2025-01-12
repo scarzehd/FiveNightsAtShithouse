@@ -31,6 +31,8 @@ var generation_mutex:Mutex
 var chunks_to_generate:Array[Vector2i] = []
 var generation_semaphore:Semaphore
 var stop_generation := false
+var generating := false
+
 
 #endregion
 
@@ -63,21 +65,13 @@ const DEBUG_GRID_CELL_SIZE = 1
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ui_right"):
-		generation_mutex.lock()
-		world_center.x += CHUNK_SIZE
-		generation_mutex.unlock()
-		
-		reset_outside_cells()
-		
-		var chunks := get_chunks_in_world()
-		
-		generation_mutex.lock()
-		var new_chunks = chunks.filter(func(chunk): return not cells.keys().has(chunk))
-		generation_mutex.unlock()
-		
-		print(new_chunks)
-		
-		queue_generate(new_chunks)
+		move_world_center(Vector2i.RIGHT)
+	elif Input.is_action_just_pressed("ui_left"):
+		move_world_center(Vector2i.LEFT)
+	elif Input.is_action_just_pressed("ui_up"):
+		move_world_center(Vector2i.UP)
+	elif Input.is_action_just_pressed("ui_down"):
+		move_world_center(Vector2i.DOWN)
 
 #endregion
 
@@ -99,41 +93,6 @@ func _exit_tree():
 	
 	generation_thread.wait_to_finish()
 
-func initialize():
-	# Center the world size on (0, 0)
-	var border_chunks = (WORLD_SIZE - 1) / 2
-	
-	# Initialize cells
-	for chunk_x in range(-border_chunks, border_chunks + 1):
-		for chunk_y in range(-border_chunks, border_chunks + 1):
-			var chunk_center = Vector2i(chunk_x, chunk_y) * CHUNK_SIZE
-			init_chunk(chunk_center)
-	
-	# Cache this so we don't call it a bajillion times
-	var world_bounds := get_world_bounds()
-	
-	# Generate rooms first, then halls.
-	for chunk_y in range(-border_chunks, border_chunks + 1):
-		for chunk_x in range(-border_chunks, border_chunks + 1):
-			var chunk_center = Vector2i(chunk_x, chunk_y) * CHUNK_SIZE
-			
-			while true:
-				gen_rooms(chunk_center)
-				var success = gen_halls(chunk_center)
-				if not success:
-					print("Halls failed to generate in chunk " + str(chunk_center) + ". Resetting chunk.")
-					init_chunk(chunk_center)
-					continue
-				success = prune_chunk(chunk_center)
-				if not success and chunk_y != -border_chunks and chunk_x != -border_chunks:
-					init_chunk(chunk_center)
-					continue
-				
-				break
-	
-	add_meshes.call_deferred()
-	print("Done!")
-
 func queue_generate(chunk_centers:Array[Vector2i]):
 	generation_mutex.lock()
 	chunks_to_generate.append_array(chunk_centers)
@@ -143,7 +102,15 @@ func queue_generate(chunk_centers:Array[Vector2i]):
 
 func generate():
 	while true:
+		generation_mutex.lock()
+		generating = false
+		generation_mutex.unlock()
+		
 		generation_semaphore.wait()
+		
+		generation_mutex.lock()
+		generating = true
+		generation_mutex.unlock()
 		
 		generation_mutex.lock()
 		var exit = stop_generation
@@ -160,15 +127,42 @@ func generate():
 		for chunk_center in chunk_centers:
 			init_chunk(chunk_center)
 		
+		var times = []
+		
 		for chunk_center in chunk_centers:
+			print("-------------------------------------------")
+			print("Chunk " + str(chunk_center))
+			var start = Time.get_ticks_usec()
 			while true:
+				var rooms_start = Time.get_ticks_usec()
 				gen_rooms(chunk_center)
+				var rooms_end = Time.get_ticks_usec()
+				
+				var rooms_time = (rooms_end - rooms_start) / 1000000.0
+				
+				print("Room generation time: " + str(rooms_time) + " secs")
+				
+				
+				var halls_start = Time.get_ticks_usec()
 				var success = gen_halls(chunk_center)
+				var halls_end = Time.get_ticks_usec()
+				
+				var halls_time = (halls_end - halls_start) / 1000000.0
+				
 				if not success:
 					print("Halls failed to generate in chunk " + str(chunk_center) + ". Resetting chunk.")
 					init_chunk(chunk_center)
 					continue
+				
+				print("Hall generation time: " + str(halls_time) + " secs")
+				
+				
+				var prune_start = Time.get_ticks_usec()
 				success = prune_chunk(chunk_center)
+				var prune_end = Time.get_ticks_usec()
+				
+				var prune_time = (prune_end - prune_start) / 1000000.0
+				print("Chunk pruning time: " + str(prune_time) + " secs")
 				
 				if not success:
 					# Check leftwards and upwards chunks
@@ -194,7 +188,25 @@ func generate():
 				
 				break
 			
+			var end = Time.get_ticks_usec()
+			
+			var time = (end - start) / 1000000.0
+			
+			print("Time for chunk: " + str(time) + " secs")
+			
+			times.append(time)
+		
 		update_meshes.call_deferred()
+		
+		if times.size() == 0:
+			return
+		
+		var sum = times.reduce(func(element, accum): return accum + element, 10)
+		
+		print("-------------------------------------------")
+		print("Average chunk time: " + str(sum / times.size()))
+		print("Total time for " + str(chunk_centers.size()) + " chunks:"  + str(sum))
+		
 
 func add_meshes():
 	for cell_position in cells:
@@ -228,6 +240,31 @@ func add_mesh(spawn_pos:Vector2i, scene:PackedScene):
 	var mesh:MeshInstance3D = scene.instantiate()
 	mesh.position = Vector3(spawn_pos.x * DEBUG_GRID_CELL_SIZE, 0, spawn_pos.y * DEBUG_GRID_CELL_SIZE)
 	add_child(mesh)
+
+func move_world_center(direction:Vector2i):
+	while true:
+		generation_mutex.lock()
+		var can_continue = not generating
+		generation_mutex.unlock()
+		
+		if can_continue:
+			break
+		else:
+			await get_tree().process_frame
+	
+	generation_mutex.lock()
+	
+	world_center += direction * CHUNK_SIZE
+	
+	reset_outside_cells()
+	
+	var chunks := get_chunks_in_world()
+	
+	var new_chunks = chunks.filter(func(chunk): return not cells.keys().has(chunk))
+	
+	generation_mutex.unlock()
+	
+	queue_generate(new_chunks)
 
 #region Room Generation
 
@@ -494,7 +531,9 @@ func reset_outside_cells():
 	var outside_cells = all_cells.filter(func(cell): return not world_bounds.has_point(cell as Vector2i))
 	
 	for cell in outside_cells:
-		set_cell_data(CellData.new(Vector2i(cell)))
+		generation_mutex.lock()
+		cells.erase(cell)
+		generation_mutex.unlock()
 
 #endregion
 
@@ -563,22 +602,38 @@ func prune_chunk(chunk_center:Vector2i) -> bool:
 	
 	var world_bounds = get_world_bounds()
 	
+	var fill_bounds = shrink_to_fit(get_chunk_bounds(chunk_center).grow(CHUNK_SIZE), world_bounds)
+	
+	var flood_start = Time.get_ticks_usec()
 	while frontier.size() > 0:
 		working_point = frontier[0]
-		if get_cell_data(working_point).type != CellType.EMPTY:
-			if not flooded_list.has(working_point):
-				flooded_list.append(working_point)
-				if world_bounds.has_point(working_point + Vector2i.RIGHT):
-					frontier.append(working_point + Vector2i.RIGHT)
-				if world_bounds.has_point(working_point + Vector2i.LEFT):
-					frontier.append(working_point + Vector2i.LEFT)
-				if world_bounds.has_point(working_point + Vector2i.UP):
-					frontier.append(working_point + Vector2i.UP)
-				if world_bounds.has_point(working_point + Vector2i.DOWN):
-					frontier.append(working_point + Vector2i.DOWN)
+		if get_cell_data(working_point).type != CellType.EMPTY and not flooded_list.has(working_point):
+			flooded_list.append(working_point)
+			if fill_bounds.has_point(working_point + Vector2i.RIGHT):
+				frontier.append(working_point + Vector2i.RIGHT)
+			if fill_bounds.has_point(working_point + Vector2i.LEFT):
+				frontier.append(working_point + Vector2i.LEFT)
+			if fill_bounds.has_point(working_point + Vector2i.UP):
+				frontier.append(working_point + Vector2i.UP)
+			if fill_bounds.has_point(working_point + Vector2i.DOWN):
+				frontier.append(working_point + Vector2i.DOWN)
 		
 		frontier.remove_at(0)
-		
+	
+	var flood_end = Time.get_ticks_usec()
+	
+	var flood_time = (flood_end - flood_start) / 1000000.0
+	
+	print("Flood fill time: " + str(flood_time) + " secs")
+	
+	print("Flood list size: " + str(flooded_list.size()))
+	
+	var reduced_list = []
+	
+	for element in flooded_list:
+		if not reduced_list.has(element):
+			reduced_list.append(element)
+	
 	var cells_to_prune = bounds_to_array(chunk_bounds).filter(func(cell): return not flooded_list.has(cell))
 	
 	for cell in cells_to_prune:
