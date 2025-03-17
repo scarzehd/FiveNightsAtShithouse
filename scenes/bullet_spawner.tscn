@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://brgootew03tie"]
 
-[ext_resource type="Script" path="res://scripts/bullet_spawner.gd" id="1_ey8u3"]
+[ext_resource type="Script" uid="uid://enob2khcma71" path="res://scripts/bullet_spawner.gd" id="1_ey8u3"]
 [ext_resource type="PackedScene" uid="uid://ig6la4gwtp8r" path="res://scenes/bullet.tscn" id="2_0b1ob"]
 
 [node name="BulletSpawner" type="Node3D"]

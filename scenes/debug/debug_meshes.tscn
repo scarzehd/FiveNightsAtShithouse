@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://wapx0syeis7e"]
+
+[ext_resource type="PackedScene" uid="uid://4ogb5m325fma" path="res://scenes/debug/room_debug_mesh.tscn" id="1_6tl3w"]
+[ext_resource type="PackedScene" uid="uid://dgx03s85ul04u" path="res://scenes/debug/hall_debug_mesh.tscn" id="2_ei0ne"]
+[ext_resource type="PackedScene" uid="uid://co3kwtfbu5gqk" path="res://scenes/debug/vent_debug_mesh.tscn" id="3_jx4fm"]
+
+[node name="DebugMeshes" type="Node3D"]
+
+[node name="RoomDebugMesh" parent="." instance=ExtResource("1_6tl3w")]
+
+[node name="HallDebugMesh" parent="." instance=ExtResource("2_ei0ne")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="VentDebugMesh" parent="." instance=ExtResource("3_jx4fm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)

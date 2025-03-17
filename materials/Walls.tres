@@ -7,3 +7,5 @@ resource_name = "Walls"
 cull_mode = 2
 albedo_texture = ExtResource("1_tlkwc")
 roughness = 0.5
+uv1_triplanar = true
+uv1_world_triplanar = true

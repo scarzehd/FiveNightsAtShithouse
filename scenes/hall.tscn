@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bu310pjagygfn"]
 
-[ext_resource type="Script" path="res://scripts/hall.gd" id="1_0yioo"]
+[ext_resource type="Script" uid="uid://b3gwutnsg5ni2" path="res://scripts/hall.gd" id="1_0yioo"]
 
 [node name="Hall" type="Area3D"]
 script = ExtResource("1_0yioo")

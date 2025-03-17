@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://b0cnkhjq6qrqj"]
 
 [ext_resource type="Texture2D" uid="uid://ddqm1ufnp2gw0" path="res://sprites/bullet_boy.png" id="1_1od63"]
-[ext_resource type="Script" path="res://scripts/bullet_boy.gd" id="1_jibcv"]
+[ext_resource type="Script" uid="uid://crdnverf1lm7o" path="res://scripts/bullet_boy.gd" id="1_jibcv"]
 [ext_resource type="AudioStream" uid="uid://bs30e2dd1qb7r" path="res://sounds/chuckle.mp3" id="3_3e63b"]
 [ext_resource type="AudioStream" uid="uid://t1y3bn885qwj" path="res://sounds/hello.mp3" id="4_rnj76"]
 

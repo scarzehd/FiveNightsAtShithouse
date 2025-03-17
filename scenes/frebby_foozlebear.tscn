@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://btwlwfy7v2eat"]
 
 [ext_resource type="Texture2D" uid="uid://bkmksaoen84on" path="res://sprites/freddy.png" id="1_f1sgk"]
-[ext_resource type="Script" path="res://scripts/frebby_foozlebear.gd" id="1_v3jbt"]
+[ext_resource type="Script" uid="uid://7l7752wg00ld" path="res://scripts/frebby_foozlebear.gd" id="1_v3jbt"]
 [ext_resource type="AudioStream" uid="uid://ce0opo8dxygvd" path="res://sounds/vine_boom.mp3" id="3_yn6g8"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_m2uqg"]

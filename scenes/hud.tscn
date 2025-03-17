@@ -3,9 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://b1ws68rrhluir" path="res://sprites/gun.png" id="1_8uj3j"]
 [ext_resource type="Texture2D" uid="uid://dpr2u8xtkr7t8" path="res://sprites/muzzle_flash.png" id="2_lotbp"]
 [ext_resource type="Texture2D" uid="uid://dp3hfiv10aw2c" path="res://sprites/reticle.png" id="3_p6vhr"]
-[ext_resource type="Shader" path="res://shaders/kromer_key.gdshader" id="4_llxi5"]
-[ext_resource type="VideoStream" path="res://videos/sniper.ogv" id="4_ya4s0"]
-[ext_resource type="Script" path="res://scripts/score_counter.gd" id="6_fkecc"]
+[ext_resource type="Shader" uid="uid://i3n5erdnul47" path="res://shaders/kromer_key.gdshader" id="4_llxi5"]
+[ext_resource type="VideoStream" uid="uid://b03oopv72lime" path="res://videos/sniper.ogv" id="4_ya4s0"]
+[ext_resource type="Script" uid="uid://b65bmhkafwdil" path="res://scripts/score_counter.gd" id="6_fkecc"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2n1jy"]
 shader = ExtResource("4_llxi5")

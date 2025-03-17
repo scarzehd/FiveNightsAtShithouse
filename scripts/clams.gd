@@ -142,7 +142,7 @@ func get_drag() -> float:
 		return AIR_DRAG
 
 
-func _on_kill_box_body_entered(body:PhysicsBody3D):
+func _on_kill_box_body_entered(body:Node3D):
 	if body.is_in_group("kill"):
 		game_over()
 	if body.is_in_group("bullet") and bullets < max_bullets:
@@ -191,5 +191,5 @@ func shoot():
 		$HUD/ScoreCounter.score += 5
 
 func game_over():
-	$HUD/ScoreCounter
+	#$HUD/ScoreCounter
 	get_tree().quit()
