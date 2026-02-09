@@ -4,7 +4,6 @@
 
 [resource]
 resource_name = "Vent"
-cull_mode = 2
 albedo_texture = ExtResource("1_kkegu")
 metallic = 0.6
 roughness = 0.22

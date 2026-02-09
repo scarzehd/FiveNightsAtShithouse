@@ -7,21 +7,26 @@ var cells:Dictionary[Vector2i,CellType] = {}
 
 const STARTING_ROOM := Rect2i(-3, -3, 5, 5)
 
-const MINIMUM_HALL_SPACING = 3
+const MINIMUM_HALL_SPACING = 4
 const STARTING_HALLS = 3
 
-const MAX_HALL_LENGTH = 10
-const MIN_HALL_LENGTH = 5
+const MAX_HALL_LENGTH = 23
+const MIN_HALL_LENGTH = 6
 
-const WORLD_SIZE := 100
+const WORLD_SIZE := 500
 
-const ROOM_DEBUG_MESH = preload("res://scenes/debug/room_debug_mesh.tscn")
-const HALL_DEBUG_MESH = preload("res://scenes/debug/hall_debug_mesh.tscn")
-const VENT_DEBUG_MESH = preload("res://scenes/debug/vent_debug_mesh.tscn")
+# MIN_ROOM_SIZE must be odd
+const MIN_ROOM_SIZE = 5
+const MAX_ROOM_SIZE = 10
+
+@export var debug := false : 
+	set(value):
+		debug = value
+		if debug_grid != null: debug_grid.visible = value
+
+@export var debug_grid:GridMap
 
 func _ready() -> void:
-	rect_abs(Rect2i(2, 2, -3, -3))
-	
 	init_cells()
 	generate()
 
@@ -34,13 +39,40 @@ func generate():
 	# Create starting room
 	set_rect(STARTING_ROOM, CellType.ROOM)
 	
-	var edge_cells := get_cells_on_rect_edge(STARTING_ROOM)
+	var hall_start_points = get_hall_candidates(STARTING_ROOM)
 	
-	# Remove corners
-	edge_cells.erase(Vector2i(STARTING_ROOM.position.x, STARTING_ROOM.position.y))
-	edge_cells.erase(Vector2i(STARTING_ROOM.position.x, STARTING_ROOM.end.y - 1))
-	edge_cells.erase(Vector2i(STARTING_ROOM.end.x - 1, STARTING_ROOM.position.y))
-	edge_cells.erase(Vector2i(STARTING_ROOM.end.x - 1, STARTING_ROOM.end.y - 1))
+	for start_point in hall_start_points:
+		gen_hall(start_point)
+	
+	add_meshes()
+
+enum CellType {
+	EMPTY,
+	ROOM,
+	HALL,
+	VENT
+}
+
+func get_hall_candidates(room:Rect2i) -> Array[Vector2i]:
+	var edge_cells := get_cells_on_rect_edge(room)
+	#
+	## Remove corners
+	#edge_cells.erase(Vector2i(room.position.x, room.position.y))
+	#edge_cells.erase(Vector2i(room.position.x, room.end.y - 1))
+	#edge_cells.erase(Vector2i(room.end.x - 1, room.position.y))
+	#edge_cells.erase(Vector2i(room.end.x - 1, room.end.y - 1))
+	
+	# Remove corners but better
+	edge_cells = edge_cells.filter(
+		func(element):
+			if get_cell_normal(element).length() == 1: return true
+			var area_to_check := centered_rect(element, Vector2i(MINIMUM_HALL_SPACING * 2, MINIMUM_HALL_SPACING * 2))
+		
+			var cells_to_check := get_cells_in_rect(area_to_check)
+			
+			for pos in cells_to_check: if cells[pos] == CellType.HALL: return false
+			return true
+	)
 	
 	var hall_start_points:Array[Vector2i] = []
 	
@@ -55,24 +87,16 @@ func generate():
 		# It's only different if the two points are on opposite sides of the starting room
 		edge_cells = edge_cells.filter(func(item): return (absi(start_point.x - item.x) + absi(start_point.y - item.y)) > MINIMUM_HALL_SPACING)
 	
-	for start_point in hall_start_points:
-		gen_hall(start_point)
-	
-	add_meshes()
+	return hall_start_points
 
-enum CellType {
-	EMPTY,
-	ROOM,
-	HALL,
-	VENT
-}
-
-func gen_hall(start:Vector2i):
+func gen_hall(start:Vector2i, depth:int = 2):
+	if depth <= 0:
+		return
 	
 	var cell_normal := get_cell_normal(start)
 	
 	if cell_normal.length() > 1:
-		cell_normal = Vector2i(0, cell_normal.y)
+		return
 	
 	var length = randi_range(MIN_HALL_LENGTH, MAX_HALL_LENGTH)
 	
@@ -85,22 +109,92 @@ func gen_hall(start:Vector2i):
 	
 	for i in range(length):
 		end_cell = start + (cell_normal * i)
-		if cells.keys().count(end_cell) > 0 and cells[end_cell] != CellType.EMPTY:
+		if cells.has(end_cell) and cells[end_cell] != CellType.EMPTY:
 			end_cell -= cell_normal
 			gen_room = false
 			break
 	
-	var hall_rect := Rect2i(start, end_cell - start)
-	
-	hall_rect = rect_abs(hall_rect)
+	var hall_rect := rect_abs(Rect2i(start, end_cell - start))
 	
 	if cell_normal.x != 0:
 		hall_rect = hall_rect.grow_individual(0, 2, 0, 1)
 	else:
 		hall_rect = hall_rect.grow_individual(2, 0, 1, 0)
 	
-	
 	set_rect(hall_rect, CellType.HALL)
+	
+	if gen_room:
+		var room := generate_room(end_cell, cell_normal)
+		set_rect(room, CellType.ROOM)
+		
+		var hall_candidates := get_hall_candidates(room)
+		
+		for candidate in hall_candidates:
+			gen_hall(candidate, depth - 1)
+
+func generate_room(start_point:Vector2i, direction:Vector2i) -> Rect2i:
+	var room := centered_rect(start_point + (MIN_ROOM_SIZE / 2) * direction, Vector2i(MIN_ROOM_SIZE, MIN_ROOM_SIZE))
+	
+	var room_intersects = get_cells_in_rect(room).reduce(
+		func(_accum, cell): return cells[cell] != CellType.EMPTY, true)
+	
+	if room_intersects:
+		return Rect2i()
+	
+	var desired_size := Vector2i(randi_range(MIN_ROOM_SIZE, MAX_ROOM_SIZE), randi_range(MIN_ROOM_SIZE, MAX_ROOM_SIZE))
+	
+	var sides = [SIDE_TOP, SIDE_BOTTOM, SIDE_LEFT, SIDE_RIGHT]
+	
+	# Remove the side opposite thie direction so we don't grow the room into the hallway
+	
+	match direction:
+		Vector2i(0, -1): # Up
+			sides.erase(SIDE_BOTTOM)
+		Vector2i(0, 1): # Down
+			sides.erase(SIDE_TOP)
+		Vector2i(-1, 0): # Left
+			sides.erase(SIDE_RIGHT)
+		Vector2i(1, 0): # Right
+			sides.erase(SIDE_LEFT)
+	
+	# If the size is already correct, we don't need to grow in that direction
+	
+	if desired_size.x == MIN_ROOM_SIZE:
+		sides.erase(SIDE_RIGHT)
+		sides.erase(SIDE_LEFT)
+	if desired_size.y == MIN_ROOM_SIZE:
+		sides.erase(SIDE_TOP)
+		sides.erase(SIDE_BOTTOM)
+	
+	var i = 0
+	
+	while sides.size() > 0:
+		var temp_room := room.grow_side(sides[i], 1)
+		
+		room_intersects = get_cells_in_rect(room).reduce(
+			func(_accum, cell): return cells[cell] != CellType.EMPTY, true)
+		
+		if room_intersects:
+			sides.remove_at(i)
+		else:
+			room = temp_room
+		
+		if desired_size.x == temp_room.size.x:
+			sides.erase(SIDE_RIGHT)
+			sides.erase(SIDE_LEFT)
+		if desired_size.y == temp_room.size.y:
+			sides.erase(SIDE_TOP)
+			sides.erase(SIDE_BOTTOM)
+		
+		i += 1
+		if i >= sides.size():
+			i = 0
+	
+	return room
+
+# Returns a rect of given size center on a point.
+func centered_rect(center:Vector2i, size:Vector2i) -> Rect2i:
+	return Rect2i(center - size / 2, size)
 
 func rect_abs(rect:Rect2i) -> Rect2i:
 	var new_start = Vector2i.ZERO
@@ -126,42 +220,134 @@ func rect_abs(rect:Rect2i) -> Rect2i:
 	
 	return new_rect
 
-# Returns a vector that points away from the nearest occupied cell
+# Returns a vector that points away from the nearest occupied cell.
+# If the cell is empty, all adjacent cells are occupied, or all adjacent cells are empty, returns Vector2i.ZERO
 func get_cell_normal(cell:Vector2i) -> Vector2i:
 	var normal = Vector2i.ZERO
 	
 	if cells[cell] == CellType.EMPTY:
 		return normal
 	
+	if cells[Vector2i(cell.x + 1, cell.y)] == CellType.EMPTY and cells[Vector2i(cell.x - 1, cell.y)] == CellType.EMPTY and cells[Vector2i(cell.x, cell.y + 1)] == CellType.EMPTY and cells[Vector2i(cell.x, cell.y - 1)] == CellType.EMPTY:
+		return normal
+	
+	if cells[Vector2i(cell.x + 1, cell.y)] != CellType.EMPTY and cells[Vector2i(cell.x - 1, cell.y)] != CellType.EMPTY and cells[Vector2i(cell.x, cell.y + 1)] != CellType.EMPTY and cells[Vector2i(cell.x, cell.y - 1)] != CellType.EMPTY:
+		return normal
+	
 	for x in [-1, 1]:
 		var neighbor_position = Vector2i(cell.x + x, cell.y)
-		if cells.keys().count(neighbor_position) <= 0:
+		if not cells.has(neighbor_position):
 			continue
 		if cells[neighbor_position] == CellType.EMPTY:
 			normal.x = x
 	
 	for y in [-1, 1]:
 		var neighbor_position = Vector2i(cell.x, cell.y + y)
-		if cells.keys().count(neighbor_position) <= 0:
+		if not cells.has(neighbor_position):
 			continue
 		if cells[neighbor_position] == CellType.EMPTY:
 			normal.y = y
 	
-	#if normal.x != 0 and normal.y != 0:
-		#print(normal)
+	return normal
+
+# Returns a vector that points away from the nearest unoccupied cell. The specified cell type counts as empty
+# If the cell is empty, all adjacent cells are occupied, or all adjacent cells are empty, returns Vector2i.ZERO
+func get_cell_normal_exclusive(cell:Vector2i, type:CellType) -> Vector2i:
+	var normal = Vector2i.ZERO
+	
+	if cells[cell] == CellType.EMPTY:
+		return normal
+	
+	if cells[Vector2i(cell.x + 1, cell.y)] == CellType.EMPTY and cells[Vector2i(cell.x - 1, cell.y)] == CellType.EMPTY and cells[Vector2i(cell.x, cell.y + 1)] == CellType.EMPTY and cells[Vector2i(cell.x, cell.y - 1)] == CellType.EMPTY:
+		return normal
+	
+	if cells[Vector2i(cell.x + 1, cell.y)] != type and cells[Vector2i(cell.x - 1, cell.y)] != type and cells[Vector2i(cell.x, cell.y + 1)] != type and cells[Vector2i(cell.x, cell.y - 1)] != type:
+		return normal
+	
+	for x in [-1, 1]:
+		var neighbor_position = Vector2i(cell.x + x, cell.y)
+		if not cells.has(neighbor_position):
+			continue
+		if cells[neighbor_position] != type:
+			normal.x = x
+	
+	for y in [-1, 1]:
+		var neighbor_position = Vector2i(cell.x, cell.y + y)
+		if not cells.has(neighbor_position):
+			continue
+		if cells[neighbor_position] != type:
+			normal.y = y
 	
 	return normal
 
 func add_meshes():
 	for pos in cells:
-		var type := cells[pos]
-		match type:
-			CellType.ROOM:
-				set_cell_item(Vector3i(pos.x, 0, pos.y), 1)
-			CellType.HALL:
-				set_cell_item(Vector3i(pos.x, 0, pos.y), 0)
-			CellType.VENT:
-				set_cell_item(Vector3i(pos.x, 0, pos.y), 2)
+		place_tile(pos)
+		
+		# Place debug tiles
+		#var type := cells[pos]
+		#match type:
+			#CellType.ROOM:
+				#debug_grid.set_cell_item(Vector3i(pos.x, 0, pos.y), 1)
+			#CellType.HALL:
+				#debug_grid.set_cell_item(Vector3i(pos.x, 0, pos.y), 0)
+			#CellType.VENT:
+				#debug_grid.set_cell_item(Vector3i(pos.x, 0, pos.y), 2)
+
+func place_tile(pos:Vector2i) -> void:
+	var type := cells[pos]
+	
+	var normal := get_cell_normal_exclusive(pos, type)
+	
+	if type == CellType.EMPTY: return
+	
+	var id := 0
+	
+	match type:
+		CellType.ROOM:
+			if normal == Vector2i.ZERO:
+				id = 0
+			elif normal.length() > 1:
+				id = 2
+			else:
+				id = 1
+				if cells[pos + normal] == CellType.HALL and get_cell_normal_exclusive(pos + normal, cells[pos + normal]).length() == 1:
+					id = 3
+		CellType.HALL:
+			if normal == Vector2i.ZERO:
+				id = 7
+			elif normal.length() > 1:
+				id = 9
+				if cells[pos + Vector2i(normal.x, 0)] == CellType.ROOM or cells[pos + Vector2i(0, normal.y)] == CellType.ROOM:
+					id = 8
+					normal = get_cell_normal(pos)
+			else:
+				id = 8
+				if cells[pos + normal] == CellType.ROOM:
+					id = 7
+	
+	var rotation := 0
+	
+	match normal:
+		Vector2i(1, 0): 
+			rotation = get_orthogonal_index_from_basis(Basis.from_euler(Vector3(0, deg_to_rad(270), 0)))
+		Vector2i(-1, 0):
+			rotation = get_orthogonal_index_from_basis(Basis.from_euler(Vector3(0, deg_to_rad(90), 0)))
+		Vector2i(0, 1):
+			rotation = get_orthogonal_index_from_basis(Basis.from_euler(Vector3(0, deg_to_rad(180), 0)))
+		Vector2i(0, -1):
+			rotation = get_orthogonal_index_from_basis(Basis.from_euler(Vector3(0, deg_to_rad(0), 0)))
+		
+		Vector2i(-1, -1):
+			rotation = get_orthogonal_index_from_basis(Basis.from_euler(Vector3(0, deg_to_rad(0), 0)))
+		Vector2i(1, -1):
+			rotation = get_orthogonal_index_from_basis(Basis.from_euler(Vector3(0, deg_to_rad(270), 0)))
+		Vector2i(1, 1):
+			rotation = get_orthogonal_index_from_basis(Basis.from_euler(Vector3(0, deg_to_rad(180), 0)))
+		Vector2i(-1, 1):
+			rotation = get_orthogonal_index_from_basis(Basis.from_euler(Vector3(0, deg_to_rad(90), 0)))
+	
+	set_cell_item(Vector3i(pos.x, 0, pos.y), id, rotation)
 
 func get_cells_on_rect_edge(rect:Rect2i) -> Array[Vector2i]:
 	var edge_cells:Array[Vector2i] = []

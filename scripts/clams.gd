@@ -153,7 +153,7 @@ func shoot():
 	if bullets <= 0:
 		return
 	
-	%BulletBoy.try_spawn()
+	#%BulletBoy.try_spawn()
 	
 	bullets -= 1
 	
@@ -167,14 +167,16 @@ func shoot():
 	
 	var query = PhysicsRayQueryParameters3D.create(origin, to, bullet_collision, [self])
 	
-	var result = space_state.intersect_ray(query)
+	var result := space_state.intersect_ray(query)
+	
+	
 	
 	$HUD/MuzzleFlash.visible = true
 	
 	get_tree().create_timer(1).timeout.connect(func():
 		$HUD/MuzzleFlash.visible = false
 		
-		if !result.collider.is_in_group("kill"):
+		if !result.has("collider") or !result.collider.is_in_group("kill"):
 			return
 		
 		$HUD/Sniper.visible = true
@@ -186,8 +188,8 @@ func shoot():
 		)
 	)
 	
-	if result.collider.is_in_group("killable"):
-		result.collider.die()
+	if result.has("collider") and result["collider"].is_in_group("killable"):
+		result["collider"].die()
 		$HUD/ScoreCounter.score += 5
 
 func game_over():

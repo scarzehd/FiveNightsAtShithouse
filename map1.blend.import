@@ -90,29 +90,6 @@ _subresources={
 "save_to_file/enabled": true,
 "save_to_file/path": "res://tiles/vent_corner.res"
 }
-},
-"nodes": {
-"PATH:Center": {
-"generate/physics": true
-},
-"PATH:Corner": {
-"generate/physics": true
-},
-"PATH:Door": {
-"generate/physics": true
-},
-"PATH:Vent": {
-"generate/physics": true
-},
-"PATH:VentCorner": {
-"generate/physics": true
-},
-"PATH:VentEntrance": {
-"generate/physics": true
-},
-"PATH:Wall": {
-"generate/physics": true
-}
 }
 }
 blender/nodes/visible=0
